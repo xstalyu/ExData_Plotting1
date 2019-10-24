@@ -1,18 +1,23 @@
 #Creating plot1.png
 
 #Setting the working directory
-setwd("C:/Users/hornec/Desktop/Coursera/4 - Exploratory Data Analysis/Week 1/Project 1")
+Data <-read.table("household_power_consumption.txt",header=TRUE,sep=";",na.string="?")
+head(Data)
 
-#Reading the raw dataset
-dataset <- read.table(file="./household_power_consumption.txt", sep=";", header=TRUE, na.strings="?")
+Data$Date <- as.Date(Data$Date, "%d/%m/%Y")
 
-#Setting the date parameters and the subsequent data subset 
-datasubset <- subset(x = dataset, Date == "1/2/2007" | Date == "2/2/2007")
-png(filename="plot1.png", width=480, height=480)
+Data <-subset(Data,Date<=as.Date("2007-02-02") & Date>=as.Date("2007-02-01"))
 
-#Labeling the histogram appropriately
-hist(datasubset$Global_active_power, main = "Global Active Power", xlab = "Global Active Power (kilowatts)", col="red")
+Data <-Data[complete.cases(Data),]
+DateTime <-paste(Data$Date,Data$Time)
+DateTime <-setNames(DateTime,"DateTime")
+Data <-Data[,!(names(Data) %in% c("Date","Time"))]
+Data <-cbind(Data,DateTime)
+head(Data)
+hist(Data$Global_active_power,main="Global Active Power",xlab="Global Active Power(Kilowatts)", col="red")
+dev.copy(png,"plot1.png", width=480, height=480)
 dev.off()
+
 
 
 
